@@ -2,6 +2,11 @@ export {};
 
 declare global {
   interface Window {
-    renderChatBot: (elementId: string, apiUrl: string, feedbackUrl: string) => void;
+    renderChatBot: ( elementId: string,
+      chatUrl: string, 
+      feedbackUrl: string, 
+      cdnUrl: string,
+      styleSheetVersion?: string,
+      useLocalStylesheets: boolean = false) => void;
   }
 }

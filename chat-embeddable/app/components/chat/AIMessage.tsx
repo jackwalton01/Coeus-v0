@@ -7,8 +7,8 @@ import { CONFIG } from "@/config";
 export function AIMessage({ message, isLoading }: { message?: Message; isLoading?: boolean }) {
   if (!message) {
     <ChatBubble variant="received">
-      <ChatBubbleAvatar fallback="MIC" src={`${CONFIG.CdnUrl}/mic-logo.png`} />
-      <ChatBubbleMessage className="tw:bg-[#95C13D]/80" isLoading={isLoading} variant="received" />
+      <ChatBubbleAvatar fallback="AI" />
+      <ChatBubbleMessage className="tw:bg-[#7FDBFF]/80" isLoading={isLoading} variant="received" />
     </ChatBubble>;
   }
 
@@ -18,8 +18,8 @@ export function AIMessage({ message, isLoading }: { message?: Message; isLoading
 
   return (
     <ChatBubble variant="received">
-      <ChatBubbleAvatar fallback="MIC" src={`${CONFIG.CdnUrl}/mic-logo.png`} />
-      <ChatBubbleMessage className="tw:bg-[#95C13D]/80" isLoading={isLoading} variant="received">
+      <ChatBubbleAvatar fallback="AI" />
+      <ChatBubbleMessage className="tw:bg-[#7FDBFF]/80" isLoading={isLoading} variant="received">
         {message && <MemoizedMarkdownMessage content={message?.content} id={message.id} />}
         <AIMessageTool message={message!} />
       </ChatBubbleMessage>

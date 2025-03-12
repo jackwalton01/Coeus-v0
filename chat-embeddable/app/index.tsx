@@ -6,7 +6,7 @@ const renderChatBot = async (
   elementId: string,
   chatUrl: string, 
   feedbackUrl: string, 
-  cdnUrl: string = 'https://d7on86vdidm2.cloudfront.net',
+  cdnUrl: string,
   styleSheetVersion?: string,
   useLocalStylesheets: boolean = false
 ) => {
@@ -19,7 +19,11 @@ const renderChatBot = async (
     return;
   }
 
-  const response = await fetch(useLocalStylesheets? './style.css' : `${CONFIG.CdnUrl}/style.css${styleSheetVersion && 'styleSheetVersion=' + styleSheetVersion}`);
+  const styleSheetUrl = useLocalStylesheets 
+    ? './style.css' 
+    : `${CONFIG.CdnUrl}/style.css${styleSheetVersion ? '?versionId=' + styleSheetVersion : ''}`;
+
+  const response = await fetch(styleSheetUrl);
   const cssText = await response.text();
 
   if (!container.shadowRoot) {
@@ -76,17 +80,17 @@ const renderChatBot = async (
 
 window.renderChatBot = renderChatBot;
 
-if (process.env.ENVIRONMENT === 'amplify' || process.env.ENVIRONMENT === 'local') { 
-  console.info('Index: Loading bot');
+// if (process.env.ENVIRONMENT === 'amplify' || process.env.ENVIRONMENT === 'local') { 
+//   console.info('Index: Loading bot');
 
-  renderChatBot(
-    'chat-container',
-    process.env.APP_FUNCTION_URL as string,
-    process.env.APP_FEEDBACK_URL as string,
-    undefined,
-    undefined,
-    process.env.ENVIRONMENT === 'local'
-  );
-}
+//   renderChatBot(
+//     'chat-container',
+//     process.env.APP_FUNCTION_URL as string,
+//     process.env.APP_FEEDBACK_URL as string,
+//     undefined,
+//     undefined,
+//     process.env.ENVIRONMENT === 'local'
+//   );
+// }
 
 export default renderChatBot;

@@ -20,22 +20,27 @@ import { Globe, Loader2, Plus, Settings } from "lucide-react"
 
 // Mock website data
 const mockWebsites = [
-  { id: 1, domain: "example.com", pages: 24, lastCrawled: "2023-12-10" },
-  { id: 2, domain: "company-docs.org", pages: 56, lastCrawled: "2023-12-05" },
+  { id: 1, domain: "kainos.com", pages: 304, lastCrawled: "12-03-2025:15:52" },
 ]
 
 // Mock subpages for a domain
 const mockSubpages = [
-  { url: "https://example.com/", title: "Home" },
-  { url: "https://example.com/about", title: "About Us" },
-  { url: "https://example.com/products", title: "Products" },
-  { url: "https://example.com/services", title: "Services" },
-  { url: "https://example.com/blog", title: "Blog" },
-  { url: "https://example.com/blog/post-1", title: "Blog Post 1" },
-  { url: "https://example.com/blog/post-2", title: "Blog Post 2" },
-  { url: "https://example.com/contact", title: "Contact Us" },
-  { url: "https://example.com/support", title: "Support" },
-  { url: "https://example.com/faq", title: "FAQ" },
+  { url: "https://www.kainos.com/", title: "Home" },
+  { url: "https://www.kainos.com/about-us", title: "About Us" },
+  { url: "https://www.kainos.com/digital-services", title: "Digital Services" },
+  { url: "https://www.kainos.com/workday", title: "Workday" },
+  { url: "https://www.kainos.com/industries", title: "Industries" },
+  { url: "https://www.kainos.com/insights", title: "Insights" },
+  { url: "https://www.kainos.com/about-us/our-approach", title: "Our Approach" },
+  { url: "https://www.kainos.com/about-us/diversity-and-inclusion", title: "Diversity And Inclusion" },
+  { url: "https://www.kainos.com/about-us/sustainability", title: "Sustainability" },
+  { url: "https://www.kainos.com/investor-relations", title: "Investor Relations" },
+  { url: "https://www.kainos.com/investor-relations/investor-tools", title: "Investor Tools" },
+  { url: "https://www.kainos.com/investor-relations/results-and-presentations", title: "Results And Presentations" },
+  { url: "https://www.kainos.com/information/recruitment-notice", title: "Recruitment Notice" },
+  { url: "https://www.kainos.com/digital-services/services/ai-and-data", title: "AI and Data" },
+  { url: "https://www.kainos.com/digital-services/expertise/generative-ai", title: "Generative AI" },
+  { url: "https://www.kainos.com/digital-services/services/cloud-and-engineering", title: "Cloud And Engineering" },
 ]
 
 export function WebsitesWidget() {

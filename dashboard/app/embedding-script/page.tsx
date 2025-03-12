@@ -5,19 +5,19 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Check, Copy } from "lucide-react"
 import { AppLayout } from "@/components/app-layout"
+import { APP_CDN_URL, APP_FUNCTION_URL } from "@/config"
 
 const EMBEDDING_SCRIPT = `<script>
   document.addEventListener('DOMContentLoaded', function() {
     const script = document.createElement('script');
-    // script.src = 'https://d7on86vdidm2.cloudfront.net/chatbot.bundle.js';
-    script.src = './chatbot.bundle.js';
+    script.src = '${APP_CDN_URL}/chatbot.bundle.js';
     script.async = true;
     script.onload = function() {
       if (window.renderChatBot) {
       window.renderChatBot(
         'chat-container',
-        'https://gqizegnlxa2uirll4rw6ceh46m0guwzt.lambda-url.eu-west-2.on.aws/',
-        'https://3nb4x7wkfjugrqtkrujlbmujju0fxneq.lambda-url.eu-west-2.on.aws/',
+        '',
+        '${APP_FUNCTION_URL}',
       );
     } else {
       console.error('renderChatBot function is not available.');

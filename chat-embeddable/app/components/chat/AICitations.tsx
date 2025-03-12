@@ -33,7 +33,7 @@ export function AICitations({
     }
   };
   return (
-    <Card className="tw:border tw:border-[#95C13D] tw:shadow-sm tw:my-2">
+    <Card className="tw:border tw:border-[#7FDBFF] tw:shadow-sm tw:my-2">
       <CardHeader>
         <div className="tw:flex tw:items-center tw:justify-between">
           <div>
