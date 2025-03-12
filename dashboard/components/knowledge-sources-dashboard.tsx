@@ -74,7 +74,10 @@ export function KnowledgeSourcesDashboard({ chatbotId }: KnowledgeSourcesDashboa
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Success</DialogTitle>
-            <DialogDescription>Your configuration has been updated successfully.</DialogDescription>
+            <DialogDescription>
+              Your configuration has been updated successfully.
+              You can now test your bot in the bottom right corner of the screen.
+              </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button onClick={() => setShowSuccessDialog(false)}>Dismiss</Button>

@@ -31,34 +31,7 @@ type Website = {
   excludePattern?: string
 }
 
-// Mock website data
-const mockWebsites: Website[] = [
-  {
-    id: 1,
-    domain: "kainos.com",
-    pages: 304,
-    lastCrawled: "12-03-2025:16:29",
-    selectedPages: [
-      "https://www.kainos.com/",
-      "https://www.kainos.com/about-us",
-      "https://www.kainos.com/digital-services",
-      "https://www.kainos.com/workday",
-      "https://www.kainos.com/industries",
-      "https://www.kainos.com/insights",
-      "https://www.kainos.com/about-us/our-approach",
-      "https://www.kainos.com/about-us/diversity-and-inclusion",
-      "https://www.kainos.com/about-us/sustainability",
-      "https://www.kainos.com/investor-relations",
-      "https://www.kainos.com/investor-relations/investor-tools",
-      "https://www.kainos.com/investor-relations/results-and-presentations",
-      "https://www.kainos.com/information/recruitment-notice",
-      "https://www.kainos.com/digital-services/services/ai-and-data",
-      "https://www.kainos.com/digital-services/expertise/generative-ai",
-      "https://www.kainos.com/digital-services/services/cloud-and-engineering",
-    ],
-  },
-]
-
+// Mock subpages for kainos.com
 const mockSubpages = [
   { url: "https://www.kainos.com/", title: "Home" },
   { url: "https://www.kainos.com/about-us", title: "About Us" },
@@ -79,7 +52,8 @@ const mockSubpages = [
 ]
 
 export function WebsitesWidget() {
-  const [websites, setWebsites] = useState<Website[]>(mockWebsites)
+  // Start with an empty websites array
+  const [websites, setWebsites] = useState<Website[]>([])
   const [url, setUrl] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [allSubpages, setAllSubpages] = useState<typeof mockSubpages>([])
@@ -127,6 +101,7 @@ export function WebsitesWidget() {
     setIsLoading(true)
     // Simulate loading delay
     setTimeout(() => {
+      // Always use the mockSubpages for kainos.com
       const pages = mockSubpages
       setAllSubpages(pages)
       setFilteredSubpages(pages)
@@ -170,12 +145,24 @@ export function WebsitesWidget() {
       )
     } else {
       // Add new website
-      const domain = new URL(url).hostname
+      // Extract domain from URL, handling both with and without protocol
+      let domain = url
+      if (url.startsWith("http")) {
+        try {
+          domain = new URL(url).hostname
+        } catch (e) {
+          // If URL parsing fails, use the input as is
+        }
+      }
+
+      // Remove www. prefix if present
+      domain = domain.replace(/^www\./, "")
+
       const newWebsite: Website = {
-        id: websites.length + 1,
+        id: Date.now(), // Use timestamp for unique ID
         domain,
         pages: selectedPages.length,
-        lastCrawled: new Date().toISOString().split("T")[0],
+        lastCrawled: new Date().toLocaleString("en-GB").replace(/\//g, "-").split(",")[0],
         selectedPages: [...selectedPages],
         includePattern: includePattern || undefined,
         excludePattern: excludePattern || undefined,
@@ -380,25 +367,33 @@ export function WebsitesWidget() {
         <CardDescription>Manage website knowledge sources</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
-          {websites.map((site) => (
-            <div key={site.id} className="flex items-center justify-between rounded-md border p-3">
-              <div className="flex items-center">
-                <Globe className="mr-2 h-5 w-5 text-green-500" />
-                <div>
-                  <p className="text-sm font-medium">{site.domain}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {site.pages} pages • Last crawled {site.lastCrawled}
-                    {(site.includePattern || site.excludePattern) && <span className="ml-1">(filtered)</span>}
-                  </p>
+        {websites.length > 0 ? (
+          <div className="space-y-2">
+            {websites.map((site) => (
+              <div key={site.id} className="flex items-center justify-between rounded-md border p-3">
+                <div className="flex items-center">
+                  <Globe className="mr-2 h-5 w-5 text-green-500" />
+                  <div>
+                    <p className="text-sm font-medium">{site.domain}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {site.pages} pages • Last crawled {site.lastCrawled}
+                      {(site.includePattern || site.excludePattern) && <span className="ml-1">(filtered)</span>}
+                    </p>
+                  </div>
                 </div>
+                <Button variant="ghost" size="sm" onClick={(e) => handleEditWebsite(site.id, e)}>
+                  <Settings className="h-4 w-4" />
+                </Button>
               </div>
-              <Button variant="ghost" size="sm" onClick={(e) => handleEditWebsite(site.id, e)}>
-                <Settings className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex h-40 flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
+            <Globe className="mb-2 h-10 w-10 text-muted-foreground" />
+            <h3 className="mb-1 text-sm font-medium">No websites added</h3>
+            <p className="text-xs text-muted-foreground">Add websites to integrate them into your bot's knowledge base</p>
+          </div>
+        )}
       </CardContent>
       <CardFooter>
         <p className="text-xs text-muted-foreground">
