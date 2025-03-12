@@ -26,6 +26,7 @@ module.exports = (env) => {
     output: {
       path: path.resolve(__dirname, './webpack'),
       filename: 'chatbot.bundle.js',
+      clean: true,
     },
     module: {
       rules: [

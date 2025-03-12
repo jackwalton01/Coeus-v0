@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm-run-all build:ts build:copy build:zip",
+    "build:clean": "rm -rf dist && rm $(node -p \"require('../package.json').name\").zip",
     "build:ts": "npx tsc",
     "build:copy": "cp -r node_modules dist/node_modules",
     "build:zip": "cd dist && zip -r ../$(node -p \"require('../package.json').name\").zip ."

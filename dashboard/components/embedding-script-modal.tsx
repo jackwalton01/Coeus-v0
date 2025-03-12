@@ -5,18 +5,21 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Check, Copy } from "lucide-react"
+import { NEXT_PUBLIC_CDN_URL, NEXT_PUBLIC_FUNCTION_URL } from "@/config"
 
-const EMBEDDING_SCRIPT = `<script>
+const EMBEDDING_SCRIPT = `  <div id="chat-container"></div>
+  <script>
   document.addEventListener('DOMContentLoaded', function() {
     const script = document.createElement('script');
-    script.src = 'https://d7on86vdidm2.cloudfront.net/chatbot.bundle.js';
+    script.src = '${NEXT_PUBLIC_CDN_URL}/chatbot.bundle.js';
     script.async = true;
     script.onload = function() {
       if (window.renderChatBot) {
       window.renderChatBot(
         'chat-container',
-        'https://gqizegnlxa2uirll4rw6ceh46m0guwzt.lambda-url.eu-west-2.on.aws/',
-        'https://3nb4x7wkfjugrqtkrujlbmujju0fxneq.lambda-url.eu-west-2.on.aws/',
+        '${NEXT_PUBLIC_FUNCTION_URL}',
+        '',
+        '${NEXT_PUBLIC_CDN_URL}',
       );
     } else {
       console.error('renderChatBot function is not available.');

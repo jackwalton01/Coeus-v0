@@ -75,6 +75,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </DropdownMenu>
         </header>
         <main className="flex-1 overflow-auto p-6">{children}</main>
+        {/* FOOD: There are lots of i think independent instances of app-layout.
+                  I DO NOT want to be adding a separate instance of the chatbot to every one */}
        { chatbotId && <ChatbotEmbeddable /> }
       </SidebarInset>
     </SidebarProvider>

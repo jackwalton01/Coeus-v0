@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npm-run-all build-css start-webpack-server",
     "start-webpack-server": "webpack serve --mode development",
-    "build": "npm-run-all build-css build-webpack-prod",
+    "build": "npm-run-all build-webpack-prod build-css",
     "build-webpack-prod": "webpack --env prod",
     "build-css": "tailwindcss -i ./app/globals.css -o ./webpack/style.css"
   },
