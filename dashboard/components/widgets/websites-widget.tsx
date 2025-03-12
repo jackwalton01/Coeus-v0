@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -18,12 +20,45 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Globe, Loader2, Plus, Settings } from "lucide-react"
 
+// Enhanced website type with selected pages
+type Website = {
+  id: number
+  domain: string
+  pages: number
+  lastCrawled: string
+  selectedPages: string[]
+  includePattern?: string
+  excludePattern?: string
+}
+
 // Mock website data
-const mockWebsites = [
-  { id: 1, domain: "kainos.com", pages: 304, lastCrawled: "12-03-2025:15:52" },
+const mockWebsites: Website[] = [
+  {
+    id: 1,
+    domain: "kainos.com",
+    pages: 304,
+    lastCrawled: "12-03-2025:16:29",
+    selectedPages: [
+      "https://www.kainos.com/",
+      "https://www.kainos.com/about-us",
+      "https://www.kainos.com/digital-services",
+      "https://www.kainos.com/workday",
+      "https://www.kainos.com/industries",
+      "https://www.kainos.com/insights",
+      "https://www.kainos.com/about-us/our-approach",
+      "https://www.kainos.com/about-us/diversity-and-inclusion",
+      "https://www.kainos.com/about-us/sustainability",
+      "https://www.kainos.com/investor-relations",
+      "https://www.kainos.com/investor-relations/investor-tools",
+      "https://www.kainos.com/investor-relations/results-and-presentations",
+      "https://www.kainos.com/information/recruitment-notice",
+      "https://www.kainos.com/digital-services/services/ai-and-data",
+      "https://www.kainos.com/digital-services/expertise/generative-ai",
+      "https://www.kainos.com/digital-services/services/cloud-and-engineering",
+    ],
+  },
 ]
 
-// Mock subpages for a domain
 const mockSubpages = [
   { url: "https://www.kainos.com/", title: "Home" },
   { url: "https://www.kainos.com/about-us", title: "About Us" },
@@ -44,13 +79,47 @@ const mockSubpages = [
 ]
 
 export function WebsitesWidget() {
-  const [websites, setWebsites] = useState(mockWebsites)
+  const [websites, setWebsites] = useState<Website[]>(mockWebsites)
   const [url, setUrl] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [subpages, setSubpages] = useState<typeof mockSubpages>([])
+  const [allSubpages, setAllSubpages] = useState<typeof mockSubpages>([])
+  const [filteredSubpages, setFilteredSubpages] = useState<typeof mockSubpages>([])
   const [selectedPages, setSelectedPages] = useState<string[]>([])
   const [dialogStep, setDialogStep] = useState<"url" | "pages">("url")
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [editingWebsiteId, setEditingWebsiteId] = useState<number | null>(null)
+  const [includePattern, setIncludePattern] = useState("")
+  const [excludePattern, setExcludePattern] = useState("")
+  const [activeTab, setActiveTab] = useState("pages")
+
+  // Apply regex filters when patterns or subpages change
+  useEffect(() => {
+    if (allSubpages.length === 0) return
+
+    let filtered = [...allSubpages]
+
+    // Apply include pattern if it exists
+    if (includePattern) {
+      try {
+        const includeRegex = new RegExp(includePattern)
+        filtered = filtered.filter((page) => includeRegex.test(page.url))
+      } catch (e) {
+        // Invalid regex, don't filter
+      }
+    }
+
+    // Apply exclude pattern if it exists
+    if (excludePattern) {
+      try {
+        const excludeRegex = new RegExp(excludePattern)
+        filtered = filtered.filter((page) => !excludeRegex.test(page.url))
+      } catch (e) {
+        // Invalid regex, don't filter
+      }
+    }
+
+    setFilteredSubpages(filtered)
+  }, [includePattern, excludePattern, allSubpages])
 
   const handleUrlSubmit = () => {
     if (!url) return
@@ -58,17 +127,19 @@ export function WebsitesWidget() {
     setIsLoading(true)
     // Simulate loading delay
     setTimeout(() => {
-      setSubpages(mockSubpages)
+      const pages = mockSubpages
+      setAllSubpages(pages)
+      setFilteredSubpages(pages)
       setIsLoading(false)
       setDialogStep("pages")
     }, 1500)
   }
 
   const handleSelectAll = () => {
-    if (selectedPages.length === subpages.length) {
+    if (selectedPages.length === filteredSubpages.length) {
       setSelectedPages([])
     } else {
-      setSelectedPages(subpages.map((page) => page.url))
+      setSelectedPages(filteredSubpages.map((page) => page.url))
     }
   }
 
@@ -81,20 +152,86 @@ export function WebsitesWidget() {
   }
 
   const handleAddWebsite = () => {
-    const domain = new URL(url).hostname
-    const newWebsite = {
-      id: websites.length + 1,
-      domain,
-      pages: selectedPages.length,
-      lastCrawled: new Date().toISOString().split("T")[0],
+    if (editingWebsiteId) {
+      // Update existing website
+      setWebsites(
+        websites.map((site) =>
+          site.id === editingWebsiteId
+            ? {
+                ...site,
+                pages: selectedPages.length,
+                lastCrawled: new Date().toISOString().split("T")[0],
+                selectedPages: [...selectedPages],
+                includePattern: includePattern || undefined,
+                excludePattern: excludePattern || undefined,
+              }
+            : site,
+        ),
+      )
+    } else {
+      // Add new website
+      const domain = new URL(url).hostname
+      const newWebsite: Website = {
+        id: websites.length + 1,
+        domain,
+        pages: selectedPages.length,
+        lastCrawled: new Date().toISOString().split("T")[0],
+        selectedPages: [...selectedPages],
+        includePattern: includePattern || undefined,
+        excludePattern: excludePattern || undefined,
+      }
+      setWebsites([...websites, newWebsite])
     }
-    setWebsites([...websites, newWebsite])
+
+    // Reset state and close dialog
     setDialogOpen(false)
-    // Reset for next time
+    resetDialogState()
+  }
+
+  const resetDialogState = () => {
     setUrl("")
-    setSubpages([])
+    setAllSubpages([])
+    setFilteredSubpages([])
     setSelectedPages([])
     setDialogStep("url")
+    setEditingWebsiteId(null)
+    setIncludePattern("")
+    setExcludePattern("")
+    setActiveTab("pages")
+  }
+
+  const handleEditWebsite = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation()
+
+    // Find the website being edited
+    const website = websites.find((site) => site.id === id)
+    if (!website) return
+
+    // Set editing state
+    setEditingWebsiteId(id)
+
+    // Load appropriate subpages based on domain
+    const pages = mockSubpages
+
+    // Set the previously selected pages
+    setAllSubpages(pages)
+    setFilteredSubpages(pages)
+    setSelectedPages(website.selectedPages || [])
+
+    // Set patterns if they exist
+    setIncludePattern(website.includePattern || "")
+    setExcludePattern(website.excludePattern || "")
+
+    setDialogStep("pages")
+    setDialogOpen(true)
+  }
+
+  const getDialogTitle = () => {
+    if (editingWebsiteId) {
+      const website = websites.find((site) => site.id === editingWebsiteId)
+      return `Edit Website: ${website?.domain}`
+    }
+    return "Add Website"
   }
 
   return (
@@ -102,17 +239,36 @@ export function WebsitesWidget() {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Websites</span>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <Dialog
+            open={dialogOpen}
+            onOpenChange={(open) => {
+              setDialogOpen(open)
+              if (!open) {
+                resetDialogState()
+              }
+            }}
+          >
             <DialogTrigger asChild>
-              <Button size="sm" variant="outline">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setEditingWebsiteId(null)
+                  setDialogStep("url")
+                }}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add Website</DialogTitle>
-                <DialogDescription>Add a website to crawl for knowledge sources.</DialogDescription>
+                <DialogTitle>{getDialogTitle()}</DialogTitle>
+                <DialogDescription>
+                  {editingWebsiteId
+                    ? "Edit which pages to include from this website."
+                    : "Add a website to crawl for knowledge sources."}
+                </DialogDescription>
               </DialogHeader>
 
               {dialogStep === "url" ? (
@@ -143,55 +299,77 @@ export function WebsitesWidget() {
                 </>
               ) : (
                 <>
-                  <Tabs defaultValue="pages">
+                  <Tabs defaultValue="pages" value={activeTab} onValueChange={setActiveTab}>
                     <TabsList className="grid w-full grid-cols-2">
                       <TabsTrigger value="pages">Pages</TabsTrigger>
                       <TabsTrigger value="advanced">Advanced</TabsTrigger>
                     </TabsList>
                     <TabsContent value="pages" className="space-y-4">
                       <div className="flex items-center justify-between py-2">
-                        <p className="text-sm font-medium">Found {subpages.length} pages</p>
+                        <p className="text-sm font-medium">
+                          Found {filteredSubpages.length} pages
+                          {filteredSubpages.length !== allSubpages.length && ` (filtered from ${allSubpages.length})`}
+                        </p>
                         <Button variant="outline" size="sm" onClick={handleSelectAll}>
-                          {selectedPages.length === subpages.length ? "Deselect All" : "Select All"}
+                          {selectedPages.length === filteredSubpages.length ? "Deselect All" : "Select All"}
                         </Button>
                       </div>
                       <div className="max-h-60 space-y-2 overflow-y-auto rounded border p-2">
-                        {subpages.map((page) => (
-                          <div key={page.url} className="flex items-center space-x-2 rounded p-2 hover:bg-muted">
-                            <Checkbox
-                              id={page.url}
-                              checked={selectedPages.includes(page.url)}
-                              onCheckedChange={() => handlePageSelect(page.url)}
-                            />
-                            <Label htmlFor={page.url} className="flex-1 cursor-pointer text-sm">
-                              {page.title}
-                              <span className="block text-xs text-muted-foreground">{page.url}</span>
-                            </Label>
-                          </div>
-                        ))}
+                        {filteredSubpages.length > 0 ? (
+                          filteredSubpages.map((page) => (
+                            <div key={page.url} className="flex items-center space-x-2 rounded p-2 hover:bg-muted">
+                              <Checkbox
+                                id={page.url}
+                                checked={selectedPages.includes(page.url)}
+                                onCheckedChange={() => handlePageSelect(page.url)}
+                              />
+                              <Label htmlFor={page.url} className="flex-1 cursor-pointer text-sm">
+                                {page.title}
+                                <span className="block text-xs text-muted-foreground">{page.url}</span>
+                              </Label>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="py-4 text-center text-muted-foreground">No pages match your filters</div>
+                        )}
                       </div>
                     </TabsContent>
                     <TabsContent value="advanced">
                       <div className="space-y-4 py-2">
                         <div className="grid gap-2">
                           <Label htmlFor="include">Include Pattern</Label>
-                          <Input id="include" placeholder="e.g., /blog/.*" />
+                          <Input
+                            id="include"
+                            placeholder="e.g., /blog/.*"
+                            value={includePattern}
+                            onChange={(e) => setIncludePattern(e.target.value)}
+                          />
                           <p className="text-xs text-muted-foreground">Regular expression to include pages</p>
                         </div>
                         <div className="grid gap-2">
                           <Label htmlFor="exclude">Exclude Pattern</Label>
-                          <Input id="exclude" placeholder="e.g., /admin/.*" />
+                          <Input
+                            id="exclude"
+                            placeholder="e.g., /admin/.*"
+                            value={excludePattern}
+                            onChange={(e) => setExcludePattern(e.target.value)}
+                          />
                           <p className="text-xs text-muted-foreground">Regular expression to exclude pages</p>
                         </div>
+                        <Button variant="outline" className="w-full mt-4" onClick={() => setActiveTab("pages")}>
+                          View Filtered Pages
+                        </Button>
                       </div>
                     </TabsContent>
                   </Tabs>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setDialogStep("url")}>
-                      Back
-                    </Button>
+                    {!editingWebsiteId && (
+                      <Button variant="outline" onClick={() => setDialogStep("url")}>
+                        Back
+                      </Button>
+                    )}
                     <Button onClick={handleAddWebsite} disabled={selectedPages.length === 0}>
-                      Add Website
+                      {editingWebsiteId ? "Update Website" : "Add Website"}
                     </Button>
                   </DialogFooter>
                 </>
@@ -211,10 +389,11 @@ export function WebsitesWidget() {
                   <p className="text-sm font-medium">{site.domain}</p>
                   <p className="text-xs text-muted-foreground">
                     {site.pages} pages • Last crawled {site.lastCrawled}
+                    {(site.includePattern || site.excludePattern) && <span className="ml-1">(filtered)</span>}
                   </p>
                 </div>
               </div>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" onClick={(e) => handleEditWebsite(site.id, e)}>
                 <Settings className="h-4 w-4" />
               </Button>
             </div>
