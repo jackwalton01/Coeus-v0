@@ -33,10 +33,14 @@ export function AppSidebar({ chatbotId }: AppSidebarProps) {
     router.push("/")
   }
 
+  // FIXME: oh my god is chatbotId storing part of the path?!
+
+  // FIXME: some very odd behavior is happening when using these buttons to navigate around
   return (
     <>
       <Sidebar>
         <SidebarHeader>
+          {/* FIXME: do we really need a Sidebar Menu for every item? */}
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" onClick={handleBackToChatbots}>

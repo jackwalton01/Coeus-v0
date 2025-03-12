@@ -19,7 +19,7 @@ const renderChatBot = async (
     return;
   }
 
-  const response = await fetch(useLocalStylesheets? './style.css' : `${CONFIG.CdnUrl}/style.css${styleSheetVersion && 'styleSheetVersion=' + styleSheetVersion}`);
+  const response = await fetch(useLocalStylesheets? '/style.css' : `${CONFIG.CdnUrl}/style.css${styleSheetVersion && 'styleSheetVersion=' + styleSheetVersion}`);
   const cssText = await response.text();
 
   if (!container.shadowRoot) {

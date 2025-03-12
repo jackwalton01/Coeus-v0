@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useEffect, useState } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,13 +16,17 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { LogOut, User } from "lucide-react"
+import { ChatbotEmbeddable } from "./chatbot-embeddable"
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useParams();
+  const chatbotId = params.id as string;
+
+  // FIXME: also why is authentication being handled by the app layout lol
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [userEmail, setUserEmail] = useState("")
-  const [selectedChatbotId, setSelectedChatbotId] = useState<string | null>(null)
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     // Check authentication status on client side
@@ -34,14 +38,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
     if (!authStatus) {
       router.push("/login")
-    }
-
-    // Check if a chatbot is selected based on the current path
-    const match = pathname.match(/^\/chatbot\/(.+)/)
-    if (match) {
-      setSelectedChatbotId(match[1])
-    } else {
-      setSelectedChatbotId(null)
     }
   }, [router, pathname])
 
@@ -57,7 +53,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      {selectedChatbotId && <AppSidebar chatbotId={selectedChatbotId} />}
+      {chatbotId && <AppSidebar chatbotId={chatbotId} />}
       <SidebarInset>
         <header className="flex h-14 items-center justify-between border-b px-6">
           <h1 className="text-xl font-semibold">Coeus</h1>
@@ -79,6 +75,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </DropdownMenu>
         </header>
         <main className="flex-1 overflow-auto p-6">{children}</main>
+       { chatbotId && <ChatbotEmbeddable /> }
       </SidebarInset>
     </SidebarProvider>
   )

@@ -6,7 +6,6 @@ import { systemMessage } from './data/system-prompt.data'
 import { APP_AWS_REGION, APP_GUARDRAIL_IDENTIFIER, APP_GUARDRAIL_VERSION, APP_MODEL_NAME } from "./config";
 import { pipeline, Stream } from "stream";
 import { ReadableStream } from 'stream/web'
-import { trace } from "console";
 
 // @ts-ignore
 export const handler = awslambda.streamifyResponse(async (event: any, responseStream, context) => {
@@ -16,6 +15,8 @@ export const handler = awslambda.streamifyResponse(async (event: any, responseSt
 
     console.info(`api/chat: Request completion using ${APP_MODEL_NAME}`);
 
+    // fixme need to make sure bedrock is using the correct provider now,
+    // we need to be using catalyst NOT lcc
     const bedrockProvider: AmazonBedrockProvider = createAmazonBedrock({
       bedrockOptions: { region: APP_AWS_REGION },
     });

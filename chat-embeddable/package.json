@@ -4,13 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "npm-run-all build-css start-webpack-server",
-    "dev-vite": "vite",
     "start-webpack-server": "webpack serve --mode development",
-    "build-embeddable": "npm-run-all build-css build-webpack-prod",
+    "build": "npm-run-all build-css build-webpack-prod",
     "build-webpack-prod": "webpack --env prod",
-    "build-amplify": "npm-run-all build-webpack-amplify build-vite",
-    "build-webpack-amplify": "webpack --env isAmplify",
-    "build-vite": "vite build",
     "build-css": "tailwindcss -i ./app/globals.css -o ./webpack/style.css"
   },
   "dependencies": {

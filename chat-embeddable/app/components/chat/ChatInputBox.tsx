@@ -71,9 +71,9 @@ export function ChatInputBox({
       <p className="tw:text-xs! tw:text-gray-500 tw:mt-1 tw:text-center">
         Chatbot may make mistakes. Please check important information.
         <br/>
-        <button className="tw:text-xs! tw:text-blue-500! tw:underline tw:bg-transparent! tw:border-none! tw:p-0! tw:m-0! tw:cursor-pointer" onClick={handleOnClick}>
+        {/* <button className="tw:text-xs! tw:text-blue-500! tw:underline tw:bg-transparent! tw:border-none! tw:p-0! tw:m-0! tw:cursor-pointer" onClick={handleOnClick}>
             Want to provide feedback?
-        </button>
+        </button> */}
       </p>
       
     </div>

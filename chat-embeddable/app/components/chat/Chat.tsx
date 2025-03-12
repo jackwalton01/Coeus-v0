@@ -60,7 +60,7 @@ export default function Chat({
         <div className="tw:max-w-3xl tw:mx-auto">
           <div className="tw:flex tw:flex-col tw:gap-4">
             {isLoading && (
-              <Badge className="tw:w-fit tw:bg-[#95C13D]/80 tw:text-black">Loading Response...</Badge>
+              <Badge className="tw:w-fit tw:bg-[#7FDBFF]/80 tw:text-black">Loading Response...</Badge>
             )}
 
             <ChatInputBox

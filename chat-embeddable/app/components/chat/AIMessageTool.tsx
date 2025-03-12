@@ -11,7 +11,7 @@ export function AIMessageTool({ message }: { message: Message }) {
   return message.toolInvocations?.map((toolInvocation: ToolInvocation) => {
     const toolCallId = toolInvocation.toolCallId;
 
-    <Card key={toolCallId} className="tw:border tw:border-[#95C13D] tw:mt-6 tw:p-2">
+    <Card key={toolCallId} className="tw:border tw:border-[#7FDBFF] tw:mt-6 tw:p-2">
       <CardHeader>
         <CardTitle className="tw:flex tw:flex-row tw:justify-between tw:items-center">
           <span>No relevant information found</span>
@@ -26,7 +26,7 @@ export function AIMessageTool({ message }: { message: Message }) {
 
     if (toolInvocation.state !== "result") {
       return (
-        <Card key={toolCallId} className="tw:border tw:border-[#95C13D] tw:mt-6">
+        <Card key={toolCallId} className="tw:border tw:border-[#7FDBFF] tw:mt-6">
           <CardHeader>
             <CardTitle className="tw:flex tw:flex-row tw:justify-between tw:items-center">
               <span>Searching Knowledge Base...</span>
@@ -47,7 +47,7 @@ export function AIMessageTool({ message }: { message: Message }) {
 
     if (!citations.length) {
       return (
-        <Card key={toolCallId} className="tw:border tw:border-[#95C13D] tw:mt-6">
+        <Card key={toolCallId} className="tw:border tw:border-[#7FDBFF] tw:mt-6">
           <CardHeader>
             <CardTitle className="tw:flex tw:flex-row tw:justify-between tw:items-center">
               <span>No relevant information found</span>

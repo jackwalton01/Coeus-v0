@@ -6,8 +6,8 @@ import { CONFIG } from "@/config";
 export function WelcomeMessage() {
   return (
     <ChatBubble variant="received">
-      <ChatBubbleAvatar fallback="MIC" src={`${CONFIG.CdnUrl}/mic-logo.png`} />
-      <ChatBubbleMessage className="tw:bg-[#95C13D]/80" variant="received">
+      <ChatBubbleAvatar fallback="AI"/>
+      <ChatBubbleMessage className="tw:bg-[#7FDBFF]/80" variant="received">
         <MemoizedMarkdownMessage content={initialChatMessage} id='' />
       </ChatBubbleMessage>
     </ChatBubble>
